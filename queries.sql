@@ -93,3 +93,43 @@ HAVING
   numcommits > 100
 ORDER BY
   numcommits DESC
+
+/*
+    5. extracts the day of the week from author.date. Days 2 to 6 are weekdays.
+*/
+
+WITH
+  commits AS (
+  SELECT
+    author.email,
+    EXTRACT(DAYOFWEEK
+    FROM
+      author.date) BETWEEN 2
+    AND 6 is_weekday,
+    LOWER(REGEXP_EXTRACT(diff.new_path, r'\.([^\./\(~_ \- #]*)$')) lang,
+    diff.new_path AS path,
+    author.date
+  FROM
+    `bigquery-public-data.github_repos.commits`,
+    UNNEST(difference) diff
+  WHERE
+    EXTRACT(YEAR
+    FROM
+      author.date)=2016)
+SELECT
+  lang,
+  is_weekday,
+  COUNT(path) AS numcommits
+FROM
+  commits
+WHERE
+  LENGTH(lang) < 8
+  AND lang IS NOT NULL
+  AND REGEXP_CONTAINS(lang, '[a-zA-Z]')
+GROUP BY
+  lang,
+  is_weekday
+HAVING
+  numcommits > 100
+ORDER BY
+  numcommits DESC
