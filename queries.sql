@@ -22,7 +22,6 @@ WHERE
     author.date)=2016
 LIMIT 10
 
-
 /*
     2. yields first path affected by commit for given author and date
 */
@@ -33,6 +32,25 @@ SELECT
   author.date
 FROM
   `bigquery-public-data.github_repos.commits`
+WHERE
+  EXTRACT(YEAR
+  FROM
+    author.date)=2016
+LIMIT
+  10
+
+/*
+    3. extract file extensions of all comits by author and date
+*/
+
+SELECT
+  author.email,
+  LOWER(REGEXP_EXTRACT(diff.new_path, r'\.([^\./\(~_ \- #]*)$')) lang,
+  diff.new_path AS path,
+  author.date
+FROM
+  `bigquery-public-data.github_repos.commits`,
+  UNNEST(difference) diff
 WHERE
   EXTRACT(YEAR
   FROM
