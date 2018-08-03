@@ -1,7 +1,12 @@
 /*
-    1. yields authored commits:
-    email, path, date
-    UNNEST is used as path and email are nested props of parent object 
+    1. yields commits (paths) for given author and date:
+    email| path | date
+    const | different | const
+    UNNEST is applied to a column which has repeated records, and flattens it
+    so email [path1, path2,...]
+    becomes:
+    email,path1 email,path2...
+    difference = [Struct<>, Struct<>...]
 */
 
 SELECT
